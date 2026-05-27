@@ -1919,17 +1919,14 @@ begin
 
 end;
 
-function TfrmMain.AddPage(ANoteBook: TNoteBook):TPage;
+function TfrmMain.AddPage(ANoteBook: TNoteBook): TPage;
 var
-  x:Integer;
+  x: Integer;
 begin
-  x:=ANotebook.PageCount;
-  ANoteBook.Pages.Add('Page'+IntToStr(x));
-  //ANoteBook.ActivePage:='Page'+IntToStr(x);
-  Result:=ANoteBook.Page[x];
-{  writeln(Result.ClassName);
-  writeln(Result.Name);}
-  //ANoteBook.ShowTabs:= (ANoteBook.PageCount > 1);
+  x := ANoteBook.PageCount;
+  ANoteBook.Pages.Add('Page' + IntToStr(x));
+  ANoteBook.PageIndex := x;
+  Result := ANoteBook.Page[x];
 end;
 
 procedure TfrmMain.RemovePage(ANoteBook: TNoteBook; iPageIndex:Integer);

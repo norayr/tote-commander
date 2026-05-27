@@ -2,7 +2,7 @@ object frmMain: TfrmMain
   Caption = 'Seksi Commander'
   ClientHeight = 490
   ClientWidth = 803
-  Color = clButton
+  Color = clBtnFace
   Font.Color = clBlack
   Font.Height = 13
   Font.Name = 'Helvetica'
