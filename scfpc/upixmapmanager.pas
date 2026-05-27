@@ -35,7 +35,7 @@ uses
 
 type
   TPixMapManager=class
-  
+
   private
     FExtList:TStringList;
     FPixmapName:TStringList;
@@ -53,7 +53,7 @@ type
     function GetBitmap(iIndex:Integer):TBitmap;
     Function GetIconByFile(fi:PFileRecItem):Integer;
   end;
-  
+
 var
   PixMapManager:TPixMapManager = nil;
 
@@ -106,6 +106,8 @@ var
   iPixMap:Integer;
   x:Integer;
   bmp:TBitmap;
+  pic:TPicture;
+  sFullName:String;
 
 begin
   assignFile(f,sFileName);
@@ -140,13 +142,41 @@ begin
 
   for x:=0 to FPixmapName.Count-1 do
   begin
-//    writeln('Loading:',x,' ',FExtList[x],': ',gpPixmapPath+FPixmapName[x]);
+    sFullName:=gpPixmapPath+FPixmapName[x];
+    writeln('Loading pixmap: ', sFullName);
+
     bmp:=TBitmap.Create;
-    bmp.LoadFromFile(gpPixmapPath+FPixmapName[x]);
-    bmp.Transparent:=True;
-//    bmp.TransparentMode:=tmFixed;
-//    writeln(bmp.Width,' ',bmp.Height);
-    FimgList.Add(bmp);
+    pic:=TPicture.Create;
+    try
+      {
+        original code used TBitmap.LoadFromFile directly.
+        loading xpm files with current Lazarus/FPC raises "Wrong image
+        format" from fpimagebitmap.inc.
+        TPicture chooses the reader from the file format and then
+        we convert the result to a bitmap for the
+        existing cache/drawing code.
+      }
+      pic.LoadFromFile(sFullName);
+      bmp.Assign(pic.Graphic);
+      bmp.Transparent:=True;
+//      bmp.TransparentMode:=tmFixed;
+//      writeln(bmp.Width,' ',bmp.Height);
+      FimgList.Add(bmp);
+      bmp:=nil; // owned by FimgList now
+    except
+      on E:Exception do
+      begin
+        writeln('Warning: cannot load pixmap [', sFullName, ']: ',
+          E.ClassName, ': ', E.Message);
+        { Keep indexes stable even if one icon is broken. }
+        bmp.SetSize(16,16);
+        bmp.Transparent:=True;
+        FimgList.Add(bmp);
+        bmp:=nil; // owned by FimgList now
+      end;
+    end;
+    pic.Free;
+    bmp.Free;
   end;
 
 end;

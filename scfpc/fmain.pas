@@ -274,7 +274,7 @@ uses
   fFindDlg, uSpaceThread, fHotDir, fAttrib, fSymLink,fHardLink,
   fMultiRename, fFileProperties, uShowForm, uVFS, uGlobsPaths,
   fChown, fLinker, fSplitter, uFileProcs, lclType, LCLProc
-  ,gtk, BaseUnix ;
+  ,gtk2, BaseUnix ;
 
 
 procedure TfrmMain.FormCreate(Sender: TObject);
@@ -353,8 +353,10 @@ begin
   CreatePanel(AddPage(nbLeft), fpLeft );
   CreatePanel(AddPage(nbRight), fpRight);
 
-  nbLeft.Options:=[nboShowCloseButtons];
-  nbRight.Options:=[nboShowCloseButtons];
+
+  // TNotebook doesn't have anymore Options or ShowTabs, will be good to replace it later with TPageControl
+  //nbLeft.Options:=[nboShowCloseButtons];
+  //nbRight.Options:=[nboShowCloseButtons];
   actShowSysFiles.Checked:=uGlobs.gShowSystemFiles;
 //  FrameLeft.SetFocus;
   PanelSelected:=fpLeft;
@@ -1923,11 +1925,11 @@ var
 begin
   x:=ANotebook.PageCount;
   ANoteBook.Pages.Add('Page'+IntToStr(x));
-  ANoteBook.ActivePage:='Page'+IntToStr(x);
+  //ANoteBook.ActivePage:='Page'+IntToStr(x);
   Result:=ANoteBook.Page[x];
 {  writeln(Result.ClassName);
   writeln(Result.Name);}
-  ANoteBook.ShowTabs:= (ANoteBook.PageCount > 1);
+  //ANoteBook.ShowTabs:= (ANoteBook.PageCount > 1);
 end;
 
 procedure TfrmMain.RemovePage(ANoteBook: TNoteBook; iPageIndex:Integer);
@@ -1941,8 +1943,10 @@ begin
       Components[0].Free;
     end;}
     ANoteBook.Pages.Delete(iPageIndex);
+     if ANoteBook.PageIndex >= ANoteBook.PageCount then
+      ANoteBook.PageIndex := ANoteBook.PageCount - 1;
   end;
-  ANoteBook.ShowTabs:= (ANoteBook.PageCount > 1);
+  //ANoteBook.ShowTabs:= (ANoteBook.PageCount > 1);
 end;
 
 procedure TfrmMain.edtCommandKeyDown(Sender: TObject; var Key: Word;

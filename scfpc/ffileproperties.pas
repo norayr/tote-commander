@@ -66,7 +66,7 @@ procedure ShowFileProperties(FileList:TFileList; const aPath:String);
 implementation
 
 uses
-  uLng, uFileProcs, FindEx, BaseUnix;
+  uLng, uFileProcs, FindEx, BaseUnix, Users;
 
 procedure ShowFileProperties(FileList:TFileList; const aPath:String);
 begin
@@ -117,8 +117,6 @@ procedure TfrmFileProperties.ShowFile(iIndex:Integer);
 var
   sb: Stat;
   dtFileDates:TDateTime;
-  psUidRec:PPasswordRecord;
-  psGidRec:PGroup;
 begin
   try
     with fFileList.GetItem(iIndex)^ do
@@ -142,8 +140,8 @@ begin
 
 
       //psUidRec := getpwuid(sb.st_uid);
-      psUidRec := FpGetpwuid(sb.st_uid);
-      if not assigned(psUidRec) then
+      //psUidRec := FpGetpwuid(sb.st_uid);
+      {if not assigned(psUidRec) then
         lblOwner.Caption:=IntToStr(sb.st_uid)
       else
         lblOwner.Caption:=psUidRec^.pw_name;
@@ -153,7 +151,21 @@ begin
         lblGroup.Caption:=IntToStr(sb.st_gid)
       else
         lblGroup.Caption:=psGidRec^.gr_name;
+       }
 
+      try
+        lblOwner.Caption := GetUserName(sb.st_uid);
+      except
+        on EUserLookupError do
+          lblOwner.Caption := IntToStr(sb.st_uid);
+      end;
+
+      try
+        lblGroup.Caption := GetGroupName(sb.st_gid);
+      except
+        on EGroupLookupError do
+          lblGroup.Caption := IntToStr(sb.st_gid);
+      end;
       lblAttrOwner.Caption := '';
       lblAttrGroup.Caption := '';
       lblAttrOther.Caption := '';
