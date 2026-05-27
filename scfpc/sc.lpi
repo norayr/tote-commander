@@ -8,7 +8,8 @@
         <LRSInOutputDirectory Value="False"/>
         <CompatibilityMode Value="True"/>
       </Flags>
-      <Title Value="sc"/>
+      <Title Value="tote"/>
+      <Icon Value="0"/>
     </General>
     <BuildModes Count="1">
       <Item1 Name="default" Default="True"/>
@@ -46,13 +47,11 @@
         <MinVersion Major="1" Valid="True"/>
       </Item4>
     </RequiredPackages>
-    <Units Count="8">
+    <Units Count="9">
       <Unit0>
         <Filename Value="sc.lpr"/>
         <IsPartOfProject Value="True"/>
-        <TopLine Value="42"/>
-        <CursorPos X="5" Y="81"/>
-        <UsageCount Value="194"/>
+        <UsageCount Value="195"/>
         <Loaded Value="True"/>
       </Unit0>
       <Unit1>
@@ -62,40 +61,40 @@
         <EditorIndex Value="1"/>
         <TopLine Value="466"/>
         <CursorPos X="49" Y="487"/>
-        <UsageCount Value="12"/>
+        <UsageCount Value="13"/>
         <Loaded Value="True"/>
       </Unit1>
       <Unit2>
         <Filename Value="ufilepanel.pas"/>
         <UnitName Value="uFilePanel"/>
         <EditorIndex Value="2"/>
-        <TopLine Value="538"/>
+        <TopLine Value="540"/>
         <CursorPos Y="570"/>
-        <UsageCount Value="12"/>
+        <UsageCount Value="13"/>
         <Loaded Value="True"/>
       </Unit2>
       <Unit3>
         <Filename Value="framepanel.pas"/>
         <UnitName Value="framePanel"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="4"/>
         <TopLine Value="398"/>
         <CursorPos X="9" Y="418"/>
-        <UsageCount Value="12"/>
+        <UsageCount Value="13"/>
         <Loaded Value="True"/>
       </Unit3>
       <Unit4>
         <Filename Value="fsymlink.pas"/>
         <UnitName Value="fSymLink"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="5"/>
         <TopLine Value="31"/>
         <CursorPos X="79" Y="70"/>
-        <UsageCount Value="12"/>
+        <UsageCount Value="13"/>
         <Loaded Value="True"/>
       </Unit4>
       <Unit5>
         <Filename Value="ffileproperties.pas"/>
         <UnitName Value="fFileProperties"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="6"/>
         <TopLine Value="131"/>
         <CursorPos X="7" Y="156"/>
         <UsageCount Value="12"/>
@@ -104,21 +103,30 @@
       <Unit6>
         <Filename Value="fmain.pas"/>
         <UnitName Value="fMain"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="6"/>
+        <EditorIndex Value="7"/>
         <TopLine Value="1922"/>
         <CursorPos Y="1961"/>
-        <UsageCount Value="11"/>
+        <UsageCount Value="12"/>
         <Loaded Value="True"/>
       </Unit6>
       <Unit7>
         <Filename Value="fmain.lfm"/>
-        <EditorIndex Value="7"/>
+        <EditorIndex Value="8"/>
         <CursorPos X="20" Y="5"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="11"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="LFM"/>
       </Unit7>
+      <Unit8>
+        <Filename Value="findex.pas"/>
+        <UnitName Value="FindEx"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="3"/>
+        <TopLine Value="48"/>
+        <CursorPos Y="62"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit8>
     </Units>
     <JumpHistory Count="27" HistoryIndex="26">
       <Position1>
@@ -151,83 +159,83 @@
       </Position7>
       <Position8>
         <Filename Value="ffileproperties.pas"/>
-        <Caret Line="69" Column="37" TopLine="232"/>
+        <Caret Line="129" Column="13" TopLine="98"/>
       </Position8>
       <Position9>
         <Filename Value="ffileproperties.pas"/>
-        <Caret Line="129" Column="13" TopLine="98"/>
+        <Caret Line="151" Column="41" TopLine="119"/>
       </Position9>
       <Position10>
         <Filename Value="ffileproperties.pas"/>
-        <Caret Line="151" Column="41" TopLine="119"/>
+        <Caret Line="120" Column="27" TopLine="100"/>
       </Position10>
       <Position11>
         <Filename Value="ffileproperties.pas"/>
-        <Caret Line="120" Column="27" TopLine="100"/>
+        <Caret Line="69" Column="44" TopLine="40"/>
       </Position11>
       <Position12>
         <Filename Value="ffileproperties.pas"/>
-        <Caret Line="69" Column="44" TopLine="40"/>
+        <Caret Line="121" Column="12" TopLine="101"/>
       </Position12>
       <Position13>
         <Filename Value="ffileproperties.pas"/>
-        <Caret Line="121" Column="12" TopLine="101"/>
+        <Caret Line="123" Column="88" TopLine="101"/>
       </Position13>
       <Position14>
         <Filename Value="ffileproperties.pas"/>
-        <Caret Line="123" Column="88" TopLine="101"/>
+        <Caret Line="264" Column="55" TopLine="43"/>
       </Position14>
       <Position15>
         <Filename Value="ffileproperties.pas"/>
-        <Caret Line="264" Column="55" TopLine="43"/>
+        <Caret Line="156" Column="7" TopLine="131"/>
       </Position15>
       <Position16>
-        <Filename Value="ffileproperties.pas"/>
-        <Caret Line="156" Column="7" TopLine="131"/>
+        <Filename Value="fmain.pas"/>
+        <Caret Line="26" Column="46" TopLine="7"/>
       </Position16>
       <Position17>
         <Filename Value="fmain.pas"/>
-        <Caret Line="26" Column="46" TopLine="7"/>
+        <Caret Line="167" Column="26" TopLine="135"/>
       </Position17>
       <Position18>
         <Filename Value="fmain.pas"/>
-        <Caret Line="167" Column="26" TopLine="135"/>
+        <Caret Line="348" Column="25" TopLine="325"/>
       </Position18>
       <Position19>
         <Filename Value="fmain.pas"/>
-        <Caret Line="348" Column="25" TopLine="325"/>
+        <Caret Line="353" Column="22" TopLine="325"/>
       </Position19>
       <Position20>
         <Filename Value="fmain.pas"/>
-        <Caret Line="353" Column="22" TopLine="325"/>
+        <Caret Line="279" Column="48" TopLine="256"/>
       </Position20>
       <Position21>
         <Filename Value="fmain.pas"/>
-        <Caret Line="279" Column="48" TopLine="256"/>
+        <Caret Line="1949" Column="5" TopLine="1920"/>
       </Position21>
       <Position22>
-        <Filename Value="fmain.pas"/>
-        <Caret Line="1949" Column="5" TopLine="1920"/>
-      </Position22>
-      <Position23>
         <Filename Value="sc.lpr"/>
         <Caret Line="50" Column="116" TopLine="42"/>
+      </Position22>
+      <Position23>
+        <Filename Value="fmain.pas"/>
+        <Caret Line="1934" Column="71" TopLine="13"/>
       </Position23>
       <Position24>
         <Filename Value="fmain.pas"/>
-        <Caret Line="1934" Column="71" TopLine="13"/>
+        <Caret Line="277" Column="8" TopLine="245"/>
       </Position24>
       <Position25>
         <Filename Value="fmain.pas"/>
-        <Caret Line="277" Column="8" TopLine="245"/>
+        <Caret Line="347" Column="69" TopLine="326"/>
       </Position25>
       <Position26>
         <Filename Value="fmain.pas"/>
-        <Caret Line="347" Column="69" TopLine="326"/>
+        <Caret Line="1930" Column="5" TopLine="1902"/>
       </Position26>
       <Position27>
-        <Filename Value="fmain.pas"/>
-        <Caret Line="1930" Column="5" TopLine="1902"/>
+        <Filename Value="ufilepanel.pas"/>
+        <Caret Line="570" TopLine="540"/>
       </Position27>
     </JumpHistory>
   </ProjectOptions>

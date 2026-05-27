@@ -85,7 +85,7 @@ type
 implementation
 
 uses
-  uLng, uGlobs, uGlobsPaths, FindEx;
+  uLng, uGlobs, uGlobsPaths;
 
 procedure TfrmOptions.FormCreate(Sender: TObject);
 begin
@@ -146,25 +146,28 @@ end;
 
 procedure TfrmOptions.FillLngListBox;
 var
-  fr:TSearchRec;
-  iIndex:Integer;
+  fr: TSearchRec;
+  iIndex: Integer;
+  r: Integer;
 begin
   lngList.Clear;
-  writeln('Language dir:'+gpLngDir);
-  if FindFirstEx(gpLngDir+'*.lng', faAnyFile, fr)<>0 then
-  begin
-    FindCloseEx(fr);
-    Exit;
-  end;
-  repeat
-    lngList.Items.Add(fr.Name);
-  until FindNextEx(fr)<>0;
-  
-  FindCloseEx(fr);
+  writeln('Language dir:' + gpLngDir);
 
-  iIndex:=lngList.Items.IndexOf(gLng);
-  if iIndex>=0 then
-    lngList.Selected[iIndex]:=True;
+  r := SysUtils.FindFirst(gpLngDir + '*.lng', faAnyFile, fr);
+  try
+    while r = 0 do
+    begin
+      if (fr.Name <> '.') and (fr.Name <> '..') then
+        lngList.Items.Add(fr.Name);
+      r := SysUtils.FindNext(fr);
+    end;
+  finally
+    SysUtils.FindClose(fr);
+  end;
+
+  iIndex := lngList.Items.IndexOf(gLng);
+  if iIndex >= 0 then
+    lngList.Selected[iIndex] := True;
 end;
 
 procedure TfrmOptions.btnOKClick(Sender: TObject);

@@ -56,8 +56,11 @@ uses
   uVFS;
 
 
+{$R *.res}
+
  begin
 //  try
+  Application.Title:='tote';
   Application.Initialize;
   ThousandSeparator:=' ';
   writeln('Seksi commander 0.6 beta1 - Free Pascal');
