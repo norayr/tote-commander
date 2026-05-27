@@ -180,11 +180,11 @@ begin
   FHeaderString[3]:=  lngGetString(clngColDate);
   FHeaderString[4]:=  lngGetString(clngColAttr);
 
-  
+
   ClearCmdLine;
   UpDatelblInfo;
   FLastMark:='*.*';
-  dgPanel.DefaultRowHeight:=16;
+  dgPanel.DefaultRowHeight:=28;
   with FLastSelect do
   begin
     Left:=0;
@@ -654,11 +654,11 @@ begin
 
   pnlHeader:=TPanel.Create(Self);
   pnlHeader.Parent:=Self;
-  pnlHeader.Height:=41;
+  pnlHeader.Height:=60;
   pnlHeader.Align:=alTop;
 
 //  pnlHeader.Width:=AOwner.Width;
-  
+
   pnlHeader.BevelInner:=bvNone;
   pnlHeader.BevelOuter:=bvNone;
 
@@ -666,24 +666,29 @@ begin
 
   lblLPath:=TStaticText.Create(pnlHeader);
   lblLPath.Parent:=pnlHeader;
-//  lblLPath.AutoSize:=True;
+  lblLPath.AutoSize:=True;
+  lblLPath.Top := 2;
+  lblLPath.Left := 2;
   lblLPath.Width:=pnlHeader.Width*2 div 3;
   lblLPath.Color:=clBtnFace;
-  
+  lblLPath.Font.Size := 14;
+
   lblFree:=TLabel.Create(pnlHeader);
   lblFree.Parent:=pnlHeader;
-  lblFree.Top:=19;
+  lblFree.Left := 2;
+  //lblFree.Top:=19;
+  lblFree.Top := lblLPath.Top + lblLPath.Height + 4;
   lblFree.Width:=pnlHeader.Width*2 div 3;
 //  lblFree.AutoSize:=True;
+  lblFree.Font.Size := 12;
 
-  
   btnRoot:=TSpeedButton.Create(pnlHeader);
   btnRoot.Parent:=pnlHeader;
   btnRoot.Width:=20;
   btnRoot.Left:=pnlHeader.Width-22;
   btnRoot.Caption:='/';
   btnRoot.Anchors:=[akRight];
-  
+
   btnUp:=TSpeedButton.Create(pnlHeader);
   btnUp.Parent:=pnlHeader;
   btnUp.Width:=20;
@@ -726,6 +731,9 @@ begin
   dgPanel.ColCount:=5;
   dgPanel.Options:=[{goVertLine,} goTabs, goRowSelect{, goSmoothScroll}, goColSizing];
   dgPanel.TabStop:=False;
+  dgPanel.Font.Size := 14;
+  dgPanel.DefaultRowHeight := 28;
+  dgPanel.RowHeights[0] := 28;
 
   lblLInfo:=TLabel.Create(pnlFooter);
   lblLInfo.Parent:=pnlFooter;
@@ -743,7 +751,7 @@ begin
   pnAltSearch.Width:=185;
   pnAltSearch.Caption:='Find:'; //localize
   pnAltSearch.Alignment:=taLeftJustify;
-  
+
   edtSearch:=TEdit.Create(pnAltSearch);
   edtSearch.Parent:=pnAltSearch;
   edtSearch.Width:=118;
@@ -752,7 +760,7 @@ begin
   edtSearch.Height:=18;
 
   pnAltSearch.Visible:=False;
-  
+
   // ---
   dgPanel.OnDblClick:=@dgPanelDblClick;
   dgPanel.OnDrawCell:=@dgPanelDrawCell;
@@ -766,7 +774,7 @@ begin
 
   edtSearch.OnChange:=@edSearchChange;
   edtSearch.OnKeyPress:=@edSearchKeyPress;
-  
+
   edtRename.OnKeyPress:=@edtRenameKeyPress;
 
   lblLPath.OnMouseEnter:=@lblLPathMouseEnter;
@@ -774,9 +782,9 @@ begin
   btnRoot.OnClick:=@btnRootClick;
   btnHome.OnClick:=@btnHomeClick;
   btnUp.OnClick:=@btnUpClick;
-  
+
   pnlFile:=TFilePanel.Create(dgPanel,lblLPath,lblCommandPath, lblFree, cmbCommand);
-  
+
 //  setup column widths
   for x:=0 to 4 do
     dgPanel.ColWidths[x]:=gColumnSize[x];
