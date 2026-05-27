@@ -334,13 +334,11 @@ object frmOptions: TfrmOptions
         Width = 23
       end
       object edtMainSize: TSpinEdit
-        Decimal_Places = 0
         MaxValue = 25
         MinValue = 14
         TabStop = True
         TabOrder = 12
         Value = 14
-        Decimal_Places = 0
         MinValue = 14
         MaxValue = 25
         Value = 14
@@ -350,13 +348,11 @@ object frmOptions: TfrmOptions
         Width = 50
       end
       object edtEditorSize: TSpinEdit
-        Decimal_Places = 0
         MaxValue = 25
         MinValue = 14
         TabStop = True
         TabOrder = 13
         Value = 14
-        Decimal_Places = 0
         MinValue = 14
         MaxValue = 25
         Value = 14
@@ -366,13 +362,11 @@ object frmOptions: TfrmOptions
         Width = 50
       end
       object edtViewerSize: TSpinEdit
-        Decimal_Places = 0
         MaxValue = 25
         MinValue = 14
         TabStop = True
         TabOrder = 14
         Value = 14
-        Decimal_Places = 0
         MinValue = 14
         MaxValue = 25
         Value = 14
