@@ -102,8 +102,11 @@ begin
       inc(iColumnCount);
       if iColumnCount>=cColumnSize then
       begin
-        lsLeft.AddObject(LineFormat(sLeftHexLine,sLeftLine, iLineCount), TObject(iDiffed));
-        lsRight.AddObject(LineFormat(sRightHexLine,sRightLine, iLineCount),TObject(iDiffed));
+        lsLeft.AddObject(LineFormat(sLeftHexLine, sLeftLine, iLineCount),
+          TObject(PtrInt(iDiffed)));
+
+        lsRight.AddObject(LineFormat(sRightHexLine, sRightLine, iLineCount),
+          TObject(PtrInt(iDiffed)));
         iDiffed:=0;
         ClearLines;
         iColumnCount:=0;
@@ -123,7 +126,7 @@ begin
         inc(iColumnCount);
         if iColumnCount>=cColumnSize then
         begin
-          lsLeft.AddObject(LineFormat(sLeftHexLine,sLeftLine, iLineCount),TObject(iDiffed));
+          lsLeft.AddObject(LineFormat(sLeftHexLine, sLeftLine, iLineCount), TObject(PtrInt(iDiffed)));
           iDiffed:=0;
           sLeftLine:='';
           sLeftHexLine:='';
@@ -145,7 +148,7 @@ begin
         inc(iColumnCount);
         if iColumnCount>=cColumnSize then
         begin
-          lsRight.AddObject(LineFormat(sRightHexLine,sRightLine, iLineCount),TObject(iDiffed));
+          lsRight.AddObject(LineFormat(sRightHexLine, sRightLine, iLineCount), TObject(PtrInt(iDiffed)));
           iDiffed:=0;
           sRightLine:='';
           sRightHexLine:='';
@@ -156,9 +159,9 @@ begin
     end;
 
     if sRightLine<>'' then
-      lsRight.AddObject(LineFormat(sRightHexLine,sRightLine, iLineCount),TObject(iDiffed));
+      lsRight.AddObject(LineFormat(sRightHexLine, sRightLine, iLineCount), TObject(PtrInt(iDiffed)));
     if sLeftLine<>'' then
-      lsLeft.AddObject(LineFormat(sLeftHexLine,sLeftLine, iLineCount),TObject(iDiffed));
+      lsLeft.AddObject(LineFormat(sLeftHexLine, sLeftLine, iLineCount), TObject(PtrInt(iDiffed)));
   Result:=iDif;
   finally
     FreeAndNil(fLeft);

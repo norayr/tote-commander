@@ -97,7 +97,8 @@ procedure TfrmCompareFiles.lstLeftSpecialLineColors(Sender: TObject;
 var
   i:Integer;
 begin
-  i:=Integer(lstLeft.Lines.Objects[Line-1]);
+  //i:=Integer(lstLeft.Lines.Objects[Line-1]);
+  i := PtrInt(lstLeft.Lines.Objects[Line-1]);
   if i = 0 then Exit;
   Special:=True;
   if chbBinMode.Checked then
@@ -126,7 +127,8 @@ procedure TfrmCompareFiles.lstRightSpecialLineColors(Sender: TObject;
 var
   i:Integer;
 begin
-  i:=Integer(lstRight.Lines.Objects[Line-1]);
+  //i:=Integer(lstRight.Lines.Objects[Line-1]);
+  i := PtrInt(lstRight.Lines.Objects[Line-1]);
   if i = 0 then Exit;
   Special:=True;
   if chbBinMode.Checked then

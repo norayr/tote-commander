@@ -391,7 +391,7 @@ begin
     if (s='') or (s[1]=';') then Continue; //; is remark
     sId:=Copy(s,1,pos(':',s)-1);
     s:=Copy(s,pos(':',s)+1,length(s)-length(sId));
-    strLngList.AddObject(s,TObject(StrToInt(sId)));
+    strLngList.AddObject(s, TObject(PtrInt(StrToInt(sId))));
   end;
   closefile(lngFile);
 end;
@@ -404,7 +404,7 @@ begin
 
   Result:='';
   for i:=0 to strLngList.Count-1 do
-     if Integer(strLngList.Objects[i])=id then
+     if Integer(IntPtr((strLngList.Objects[i])))=id then
      begin
        Result:=strLngList.Strings[i];
        Break;

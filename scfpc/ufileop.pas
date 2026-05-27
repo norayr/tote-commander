@@ -49,9 +49,9 @@ uses
 
 Function IsDirByName(const sName:String):Boolean;
 var
-  stat:stat64;
+  stat:BaseUnix.Stat;
 begin
-  fpStat64(PChar(sName),stat);
+  fpStat(PChar(sName),stat);
   Result:=FPS_ISDIR(stat.st_mode);
 end;
 
@@ -60,7 +60,7 @@ Function LoadFilesbyDir(const sDir:String; fl:TFileList):Boolean;
 var
   fr:TFileRecItem;
   sr:TSearchRec;
-  sb: stat64; //buffer for stat64
+  sb: BaseUnix.Stat; //buffer for stat64
   
 begin
 //  writeln('Enter LoadFilesbyDir');
@@ -98,7 +98,7 @@ begin
     fr.sNameNoExt:=Copy(sr.Name,1,length(sr.Name)-length(fr.sExt));
     fr.sName:=sr.Name;
 
-    Fplstat64(sr.Name,sb);
+    Fpstat(sr.Name,sb);
     fr.iSize:=sb.st_size;
 
     fr.iOwner:=sb.st_uid; //UID

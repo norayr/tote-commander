@@ -125,7 +125,7 @@ begin
         Continue;
 
       if FExtList.IndexOf(sExt)<0 then
-        FExtList.AddObject(sExt, TObject(iPixMap));
+        FExtList.AddObject(sExt, TObject(IntPtr(iPixMap)));
     end;
   finally
     CloseFile(f);
@@ -142,7 +142,7 @@ begin
   begin
 //    writeln('Loading:',x,' ',FExtList[x],': ',gpPixmapPath+FPixmapName[x]);
     bmp:=TBitmap.Create;
-    bmp.LoadFromXPMFile(gpPixmapPath+FPixmapName[x]);
+    bmp.LoadFromFile(gpPixmapPath+FPixmapName[x]);
     bmp.Transparent:=True;
 //    bmp.TransparentMode:=tmFixed;
 //    writeln(bmp.Width,' ',bmp.Height);
@@ -194,7 +194,7 @@ begin
       Result:=FiDefaultIconID;
       Exit;
     end;
-    Result:=Integer(FExtList.Objects[Result]);
+    Result:=Integer(PtrInt(FExtList.Objects[Result]));
 //    writeln(Result);
   end;
 end;

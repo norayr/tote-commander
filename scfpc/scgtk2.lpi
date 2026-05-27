@@ -1,161 +1,223 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
-    <Version Value="3"/>
+    <Version Value="12"/>
     <General>
-      <ProjectType Value="Application"/>
-      <MainUnit Value="0"/>
-      <ActiveEditorIndexAtStart Value="3"/>
-      <IconPath Value="./"/>
-      <TargetFileExt Value=""/>
+      <Flags>
+        <LRSInOutputDirectory Value="False"/>
+        <CompatibilityMode Value="True"/>
+      </Flags>
       <Title Value="scgtk2"/>
+      <ActiveWindowIndexAtStart Value="-1"/>
     </General>
-    <JumpHistory Count="5" HistoryIndex="4">
-      <Position1>
-        <Filename Value="/home/radek/kodovani2/lazarus/lcl/interfaces/gtk/gtkproc.pp"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
-      </Position1>
-      <Position2>
-        <Filename Value="/home/radek/kodovani2/lazarus/lcl/interfaces/gtk/gtkproc.pp"/>
-        <Caret Line="90" Column="36" TopLine="72"/>
-      </Position2>
-      <Position3>
-        <Filename Value="/home/radek/kodovani2/lazarus/lcl/interfaces/gtk/gtkproc.pp"/>
-        <Caret Line="98" Column="10" TopLine="84"/>
-      </Position3>
-      <Position4>
-        <Filename Value="/home/radek/kodovani2/lazarus/lcl/interfaces/gtk/gtkproc.pp"/>
-        <Caret Line="107" Column="53" TopLine="16"/>
-      </Position4>
-      <Position5>
-        <Filename Value="/home/radek/kodovani2/lazarus/lcl/interfaces/gtk/gtkproc.pp"/>
-        <Caret Line="33" Column="29" TopLine="19"/>
-      </Position5>
-    </JumpHistory>
-    <Units Count="8">
-      <Unit0>
-        <CursorPos X="6" Y="16"/>
-        <EditorIndex Value="0"/>
-        <Filename Value="scgtk2.lpr"/>
-        <IsPartOfProject Value="True"/>
-        <Loaded Value="True"/>
-        <TopLine Value="1"/>
-        <UnitName Value="scgtk2"/>
-        <UsageCount Value="20"/>
-      </Unit0>
-      <Unit1>
-        <CursorPos X="1" Y="1"/>
-        <Filename Value="sc.lpi"/>
-        <SyntaxHighlighter Value="None"/>
-        <TopLine Value="1"/>
-        <UsageCount Value="10"/>
-      </Unit1>
-      <Unit2>
-        <CursorPos X="39" Y="17"/>
-        <Filename Value="scgtk2.lpr"/>
-        <TopLine Value="1"/>
-        <UnitName Value="sc"/>
-        <UsageCount Value="10"/>
-      </Unit2>
-      <Unit3>
-        <CursorPos X="1" Y="118"/>
-        <Filename Value="/home/radek/kodovani2/lazarus/lcl/interfaces/gtk/gtkobject.inc"/>
-        <TopLine Value="103"/>
-        <UsageCount Value="10"/>
-      </Unit3>
-      <Unit4>
-        <CursorPos X="56" Y="33"/>
-        <EditorIndex Value="1"/>
-        <Filename Value="fmain.pas"/>
-        <ComponentName Value="frmMain"/>
-        <Loaded Value="True"/>
-        <TopLine Value="31"/>
-        <UnitName Value="fMain"/>
-        <UsageCount Value="10"/>
-      </Unit4>
-      <Unit5>
-        <CursorPos X="3" Y="463"/>
-        <EditorIndex Value="2"/>
-        <Filename Value="framepanel.pas"/>
-        <ComponentName Value="FrameFilePanel"/>
-        <Loaded Value="True"/>
-        <ResourceFilename Value="framepanel.lrs"/>
-        <TopLine Value="451"/>
-        <UnitName Value="framePanel"/>
-        <UsageCount Value="10"/>
-      </Unit5>
-      <Unit6>
-        <CursorPos X="1" Y="99"/>
-        <EditorIndex Value="3"/>
-        <Filename Value="/home/radek/kodovani2/lazarus/lcl/interfaces/gtk/gtkproc.pp"/>
-        <Loaded Value="True"/>
-        <TopLine Value="84"/>
-        <UnitName Value="GTKProc"/>
-        <UsageCount Value="10"/>
-      </Unit6>
-      <Unit7>
-        <CursorPos X="3" Y="394"/>
-        <EditorIndex Value="4"/>
-        <Filename Value="/home/radek/kodovani2/lazarus/lcl/interfaces/gtk/gtkcallback.inc"/>
-        <Loaded Value="True"/>
-        <TopLine Value="390"/>
-        <UsageCount Value="10"/>
-      </Unit7>
-    </Units>
+    <MacroValues Count="1">
+      <Macro1 Name="LCLWidgetType" Value="gtk2"/>
+    </MacroValues>
+    <BuildModes Count="1">
+      <Item1 Name="default" Default="True"/>
+      <SharedMatrixOptions Count="1">
+        <Item1 ID="671603945856" Modes="default" Type="IDEMacro" MacroName="LCLWidgetType" Value="gtk2"/>
+      </SharedMatrixOptions>
+    </BuildModes>
     <PublishOptions>
       <Version Value="2"/>
-      <IgnoreBinaries Value="False"/>
-      <IncludeFileFilter Value="*.(pas|pp|inc|lfm|lpr|lrs|lpi|lpk|sh|xml)"/>
-      <ExcludeFileFilter Value="*.(bak|ppu|ppw|o|so);*~;backup"/>
     </PublishOptions>
     <RunParams>
       <local>
-        <FormatVersion Value="1"/>
-        <LaunchingApplication PathPlusParams="/usr/X11R6/bin/xterm -T 'Lazarus Run Output' -e $(LazarusDir)/tools/runwait.sh $(TargetCmdLine)"/>
+        <LaunchingApplication PathPlusParams="/usr/X11R6/bin/xterm -T &apos;Lazarus Run Output&apos; -e $(LazarusDir)/tools/runwait.sh $(TargetCmdLine)"/>
       </local>
+      <FormatVersion Value="2"/>
+      <Modes Count="1">
+        <Mode0 Name="default">
+          <local>
+            <LaunchingApplication PathPlusParams="/usr/X11R6/bin/xterm -T &apos;Lazarus Run Output&apos; -e $(LazarusDir)/tools/runwait.sh $(TargetCmdLine)"/>
+          </local>
+        </Mode0>
+      </Modes>
     </RunParams>
-    <RequiredPackages Count="5">
+    <RequiredPackages Count="4">
       <Item1>
-        <PackageName Value="viewerpackage"/>
+        <PackageName Value="ImagesForLazarus"/>
       </Item1>
       <Item2>
-        <PackageName Value="SynEdit"/>
+        <PackageName Value="viewerpackage"/>
       </Item2>
       <Item3>
-        <PackageName Value="LCL"/>
-        <MinVersion Major="1" Valid="True"/>
+        <PackageName Value="SynEdit"/>
       </Item3>
       <Item4>
-        <PackageName Value="JPEGForLazarus"/>
+        <PackageName Value="LCL"/>
+        <MinVersion Major="1" Valid="True"/>
       </Item4>
-      <Item5>
-        <PackageName Value="GTK2Interface"/>
-      </Item5>
     </RequiredPackages>
+    <Units Count="18">
+      <Unit0>
+        <Filename Value="scgtk2.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="6" Y="16"/>
+        <UsageCount Value="25"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="sc.lpi"/>
+        <UsageCount Value="10"/>
+        <DefaultSyntaxHighlighter Value="XML"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="../../../../radek/kodovani2/lazarus/lcl/interfaces/gtk/gtkobject.inc"/>
+        <TopLine Value="103"/>
+        <CursorPos Y="118"/>
+        <UsageCount Value="10"/>
+      </Unit2>
+      <Unit3>
+        <Filename Value="fmain.pas"/>
+        <ComponentName Value="frmMain"/>
+        <HasResources Value="True"/>
+        <UnitName Value="fMain"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="31"/>
+        <CursorPos X="56" Y="33"/>
+        <UsageCount Value="10"/>
+      </Unit3>
+      <Unit4>
+        <Filename Value="framepanel.pas"/>
+        <ComponentName Value="FrameFilePanel"/>
+        <HasResources Value="True"/>
+        <UnitName Value="framePanel"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="451"/>
+        <CursorPos X="3" Y="463"/>
+        <UsageCount Value="10"/>
+      </Unit4>
+      <Unit5>
+        <Filename Value="../../../../radek/kodovani2/lazarus/lcl/interfaces/gtk/gtkproc.pp"/>
+        <UnitName Value="GTKProc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="84"/>
+        <CursorPos Y="99"/>
+        <UsageCount Value="10"/>
+      </Unit5>
+      <Unit6>
+        <Filename Value="../../../../radek/kodovani2/lazarus/lcl/interfaces/gtk/gtkcallback.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="390"/>
+        <CursorPos X="3" Y="394"/>
+        <UsageCount Value="10"/>
+      </Unit6>
+      <Unit7>
+        <Filename Value="fmain.lfm"/>
+        <EditorIndex Value="-1"/>
+        <UsageCount Value="10"/>
+        <DefaultSyntaxHighlighter Value="LFM"/>
+      </Unit7>
+      <Unit8>
+        <Filename Value="framepanel.lfm"/>
+        <HasResources Value="True"/>
+        <EditorIndex Value="-1"/>
+        <WindowIndex Value="-1"/>
+        <UsageCount Value="10"/>
+        <DefaultSyntaxHighlighter Value="LFM"/>
+      </Unit8>
+      <Unit9>
+        <Filename Value="ucolorext.pas"/>
+        <UnitName Value="uColorExt"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="63"/>
+        <CursorPos X="52" Y="90"/>
+        <UsageCount Value="12"/>
+      </Unit9>
+      <Unit10>
+        <Filename Value="ulng.pas"/>
+        <UnitName Value="uLng"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="386"/>
+        <CursorPos X="49" Y="407"/>
+        <UsageCount Value="12"/>
+      </Unit10>
+      <Unit11>
+        <Filename Value="upixmapmanager.pas"/>
+        <UnitName Value="uPixMapManager"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="176"/>
+        <CursorPos X="54" Y="197"/>
+        <UsageCount Value="12"/>
+      </Unit11>
+      <Unit12>
+        <Filename Value="uusersgroups.pas"/>
+        <UnitName Value="uUsersGroups"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="154"/>
+        <CursorPos X="29" Y="182"/>
+        <UsageCount Value="12"/>
+      </Unit12>
+      <Unit13>
+        <Filename Value="findex.pas"/>
+        <UnitName Value="FindEx"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="32"/>
+        <CursorPos Y="73"/>
+        <UsageCount Value="11"/>
+      </Unit13>
+      <Unit14>
+        <Filename Value="ufileprocs.pas"/>
+        <UnitName Value="uFileProcs"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="21"/>
+        <CursorPos X="65" Y="34"/>
+        <UsageCount Value="11"/>
+      </Unit14>
+      <Unit15>
+        <Filename Value="ufileop.pas"/>
+        <UnitName Value="uFileOp"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="80"/>
+        <CursorPos X="11" Y="101"/>
+        <UsageCount Value="11"/>
+      </Unit15>
+      <Unit16>
+        <Filename Value="feditorconf.pas"/>
+        <UnitName Value="fEditorConf"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="9"/>
+        <CursorPos X="20" Y="19"/>
+        <UsageCount Value="11"/>
+      </Unit16>
+      <Unit17>
+        <Filename Value="fviewer.pas"/>
+        <UnitName Value="fViewer"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="10"/>
+        <CursorPos X="3" Y="31"/>
+        <UsageCount Value="10"/>
+      </Unit17>
+    </Units>
+    <JumpHistory HistoryIndex="-1"/>
   </ProjectOptions>
   <CompilerOptions>
-    <Version Value="2"/>
+    <Version Value="11"/>
     <SearchPaths>
-      <SrcPath Value="$(LazarusDir)/lcl/;$(LazarusDir)/lcl/interfaces/$(LCLWidgetType)/"/>
+      <SrcPath Value="$(LazarusDir)/lcl;$(LazarusDir)/lcl/interfaces/$(LCLWidgetType)"/>
     </SearchPaths>
-    <CodeGeneration>
-      <Generate Value="Faster"/>
-    </CodeGeneration>
-    <Other>
-      <CompilerPath Value="$(CompPath)"/>
-    </Other>
+    <Parsing>
+      <SyntaxOptions>
+        <UseAnsiStrings Value="False"/>
+      </SyntaxOptions>
+    </Parsing>
   </CompilerOptions>
   <Debugging>
     <BreakPoints Count="1">
       <Item1>
-        <Source Value="/home/radek/kodovani2/lazarus/lcl/include/imglist.inc"/>
+        <Kind Value="bpkSource"/>
+        <WatchScope Value="wpsGlobal"/>
+        <WatchKind Value="wpkWrite"/>
+        <Source Value="../../../../radek/kodovani2/lazarus/lcl/include/imglist.inc"/>
         <Line Value="435"/>
       </Item1>
     </BreakPoints>
     <Watches Count="1">
       <Item1>
         <Expression Value="Key"/>
-        <InitialEnabled Value="False"/>
       </Item1>
     </Watches>
   </Debugging>

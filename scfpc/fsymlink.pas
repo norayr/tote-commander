@@ -29,7 +29,7 @@ procedure ShowSymLinkForm(const sNew, sDst:String);
 implementation
 
 uses
-  uLng, uShowMsg, Unix;
+  uLng, uShowMsg, Unix, BaseUnix;
 
 procedure ShowSymLinkForm(const sNew, sDst:String);
 begin
@@ -60,12 +60,14 @@ begin
   inherited;
   sSrc:=edtNew.Text;
   sDst:=edtDst.Text;
-  if fpsymlink(PChar(@sSrc[1]),PChar(@sDst[1]))=0 then
+  {if fpsymlink(PChar(@sSrc[1]),PChar(@sDst[1]))=0 then
     Close
   else
   begin
     MsgError(lngGetString(clngSymErrCreate));
-  end;
+  end;}
+  if fpSymlink(PChar(AnsiString(sSrc)), PChar(AnsiString(sDst))) <> 0 then
+  ShowMessage(Format('Cannot create symbolic link. Errno: %d', [fpGetErrno]));
 end;
 
 procedure TfrmSymLink.frmSymLinkKeyPress(Sender: TObject; var Key: Char);

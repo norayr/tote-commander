@@ -23,233 +23,66 @@ unit FindEx;
 
 interface
 
-{$DEFINE USE_STAT64}
-{ $DEFINE USE_STAT64LIBC}    // libc version
-
 uses
-  BaseUnix, Unix, SysUtils {$IFDEF USE_STAT64LIBC}, Libc {$ELSE}, SysCall{$ENDIF};
+  BaseUnix, Unix, SysUtils, SysCall;
 
 Type
-  PGlobSearchRecEx = ^TGlobSearchRecEx;
-  TGlobSearchRecEx = Record
-    Path       : String;
-    GlobHandle : PGlob;
-    LastName :String;
+  TGlobSearchRecEx = record
+    FindHandle: TSearchRec;
+    Path: String;
   end;
+  PGlobSearchRecEx = ^TGlobSearchRecEx;
+   TFindStatus = (fsOK, fsStatFailed, fsBadAttr);
 
-  TFindStatus = (fsOK, fsStatFailed, fsBadAttr);
-
-{$IFDEF USE_STAT64}
-  {$IFDEF USE_STAT64LIBC}
-  Stat64 = Libc._stat64;
-  {$ELSE}
-   // for kernel syscall check structure
-   {$I stat64.inc}
-   
-  {$ENDIF}
-{$ENDIF}
 
 
 Procedure FindCloseEx (Var F : TSearchrec);
 Function FindFirstEx (Const Path : String; Attr : Longint; Var Rslt : TSearchRec) : Longint;
 Function FindNextEx (Var Rslt : TSearchRec) : Longint;
 function FindStat (Var Rslt : TSearchRec) :TFindStatus;
-
-{$IFDEF USE_STAT64}
-function Fpstat64(path:String; var buf:stat64):cint;
-function Fplstat64(path:String; var buf:stat64):cint;
-function FindStat64 (Var Rslt : TSearchRec) :TFindStatus;
-{$ENDIF}
-
 
 implementation
 
-
-Function GlobToTSearchRec (Var Info : TSearchRec) : Boolean;
-
-Var
-  p     : Pglob;
-  GlobSearchRec : PGlobSearchRecEx;
-
-begin
-  GlobSearchRec:=PGlobSearchRecEx(Info.FindHandle);
-  P:=GlobSearchRec^.GlobHandle;
-  Result:=P<>Nil;
-  If Result then
-  begin
-    GlobSearchRec^.GlobHandle:=P^.Next;
-    With Info do
-    begin
-      If P^.Name<>Nil then
-        Name:=strpas(p^.name)
-      else
-        Name:='';
-      GlobSearchRec^.LastName:=Name;
-    end;
-    P^.Next:=Nil;
-    Unix.GlobFree(P);
-  end;
-end;
-
-
-Function DoFind(Var Rslt : TSearchRec) : Longint;
-
-Var
-  GlobSearchRec : PGlobSearchRecEx;
-
-begin
-  Result:=-1;
-  GlobSearchRec:=PGlobSearchRecEx(Rslt.FindHandle);
-  If (GlobSearchRec^.GlobHandle<>Nil) then
-    While (GlobSearchRec^.GlobHandle<>Nil) and not (Result=0) do
-      If GlobToTSearchRec(Rslt) Then Result:=0;
-end;
-
-
-Function FindFirstEx (Const Path : String; Attr : Longint; Var Rslt : TSearchRec) : Longint;
-
-Var
-  GlobSearchRec : PGlobSearchRecEx;
-
+function FindFirstEx(const Path: String; Attr: Longint; var Rslt: TSearchRec): Longint;
+var
+  GlobSearchRec: PGlobSearchRecEx;
 begin
   New(GlobSearchRec);
-  GlobSearchRec^.Path:=ExpandFileName(ExtractFilePath(Path));
-  GlobSearchRec^.GlobHandle:=Unix.Glob(Path);
-  GlobSearchRec^.LastName:='';
-  Rslt.ExcludeAttr:=Not Attr and (faHidden or faSysFile or faVolumeID or faDirectory); //!! Not correct !!
-  Rslt.FindHandle:=GlobSearchRec;
-  Result:=DoFind (Rslt);
-
+  Rslt.FindHandle := Pointer(GlobSearchRec);
+  GlobSearchRec^.Path := ExpandFileName(Path);
+  Result := FindFirst(Path, Attr, GlobSearchRec^.FindHandle);
+  Rslt := GlobSearchRec^.FindHandle; // Copy the record to the user's variable
 end;
 
-Function LinuxToWinAttr (FN : Pchar; Const Info : BaseUnix.Stat) : Longint;
-
+function FindNextEx(var Rslt: TSearchRec): Longint;
 begin
-  Result:=faArchive;
-  If fpS_ISDIR(Info.st_mode) then
-    Result:=Result or faDirectory;
-  If (FN[0]='.') and (not (FN[1] in [#0,'.']))  then
-    Result:=Result or faHidden;
-  If (Info.st_Mode and S_IWUSR)=0 Then
-     Result:=Result or faReadOnly;
-  If fpS_ISSOCK(Info.st_mode) or fpS_ISBLK(Info.st_mode) or fpS_ISCHR(Info.st_mode) or fpS_ISFIFO(Info.st_mode) Then
-     Result:=Result or faSysFile;
+  Result := FindNext(Rslt);
 end;
 
-
-
-Function FindNextEx (Var Rslt : TSearchRec) : Longint;
+procedure FindCloseEx(var F: TSearchRec);
+var
+  GlobSearchRec: PGlobSearchRecEx;
 begin
-  Result:=DoFind (Rslt);
-end;
-
-function FindStat (Var Rslt : TSearchRec) :TFindStatus;
-Var
-  SInfo : BaseUnix.Stat;
-  GlobSearchRec : PGlobSearchRecEx;
-
-begin
-  Result:=fsOK;
-  GlobSearchRec:=PGlobSearchrecEx(Rslt.FindHandle);
-
-  if Fpstat(GlobSearchRec^.Path+GlobSearchRec^.LastName,SInfo)<0 then
-    Result:=fsStatFailed;
-  If Result = fsOK then
+  if Assigned(F.FindHandle) then
   begin
-    Rslt.Attr:=LinuxToWinAttr(PChar(GlobSearchRec^.LastName),SInfo);
-    // hmm, attr support is not good
-    if (Rslt.ExcludeAttr and Rslt.Attr)<>0 then
-      Result:=fsBadAttr;
-    If Result = fsOK Then
-       With Rslt do
-       begin
-         Attr:=Rslt.Attr;
-         Time:=Sinfo.st_mtime;
-         Size:=Sinfo.st_Size;
-       end;
+    GlobSearchRec := PGlobSearchRecEx(F.FindHandle);
+    Dispose(GlobSearchRec);
+    F.FindHandle := nil;
   end;
 end;
 
-{$IFDEF USE_STAT64}
-
-Function LinuxToWinAttr64 (FN : Pchar; Const Info : Stat64) : Longint;
-
+function FindStat(var Rslt: TSearchRec): TFindStatus;
 begin
-  Result:=faArchive;
-  If fpS_ISDIR(Info.st_mode) then
-    Result:=Result or faDirectory;
-  If (FN[0]='.') and (not (FN[1] in [#0,'.']))  then
-    Result:=Result or faHidden;
-  If (Info.st_Mode and S_IWUSR)=0 Then
-     Result:=Result or faReadOnly;
-  If fpS_ISSOCK(Info.st_mode) or fpS_ISBLK(Info.st_mode) or fpS_ISCHR(Info.st_mode) or fpS_ISFIFO(Info.st_mode) Then
-     Result:=Result or faSysFile;
+  // Assume Rslt already filled by FindFirstEx or FindNextEx
+  if Rslt.Attr <> faAnyFile then
+    Result := fsOK
+  else
+    Result := fsStatFailed; // If Rslt.Attr is faAnyFile, it means no file was found.
+
+  // Additional checks or processing can be added here as needed.
+  // For example, you might want to filter out files based on specific attributes
+  // or perform additional checks on the file.
 end;
-
-{$IFDEF USE_STAT64LIBC}
-function Fpstat64(path:String; var buf:stat64):cint;
-begin
-  Result:=Libc.stat64(Pchar(path),buf);
-end;
-
-function Fplstat64(path: String; var buf: stat64): cint;
-begin
-  Result:=Libc.lstat64(Pchar(path),buf);
-end;
-
-{$ELSE}
-function Fpstat64(path:String; var buf:stat64):cint;
-begin
-  Result:=do_syscall(syscall_nr_stat64,TSysParam(PChar(path)),TSysParam(@buf));
-end;
-
-function Fplstat64(path: String; var buf: stat64): cint;
-begin
-  Result:=do_syscall(syscall_nr_lstat64,TSysParam(PChar(path)),TSysParam(@buf));
-end;
-
-{$ENDIF}
-
-
-function FindStat64 (Var Rslt : TSearchRec) :TFindStatus;
-Var
-  SInfo : Stat64;
-  GlobSearchRec : PGlobSearchRecEx;
-
-begin
-  Result:=fsOK;
-  GlobSearchRec:=PGlobSearchrecEx(Rslt.FindHandle);
-  if Fpstat64(GlobSearchRec^.Path+GlobSearchRec^.LastName,SInfo)<0 then
-    Result:=fsStatFailed;
-  If Result = fsOK then
-  begin
-    Rslt.Attr:=LinuxToWinAttr64(PChar(GlobSearchRec^.LastName),SInfo);
-    // hmm, attr support is not good
-    if (Rslt.ExcludeAttr and Rslt.Attr)<>0 then
-      Result:=fsBadAttr;
-    If Result = fsOK Then
-       With Rslt do
-       begin
-         Attr:=Rslt.Attr;
-         Time:=Sinfo.st_mtime;
-         Size:=Sinfo.st_Size;
-       end;
-  end;
-end;
-
-{$ENDIF}
-
-
-Procedure FindCloseEx (Var F : TSearchrec);
-Var
-  GlobSearchRec : PGlobSearchRecEx;
-begin
-  GlobSearchRec:=PGlobSearchRecEx(F.FindHandle);
-  Unix.GlobFree (GlobSearchRec^.GlobHandle);
-  Dispose(GlobSearchRec);
-end;
-
-
 
 end.
 

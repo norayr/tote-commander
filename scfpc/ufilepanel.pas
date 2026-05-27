@@ -540,30 +540,32 @@ end;
 
 procedure TFilePanel.UpdatePrompt;
 var
-  sbfs:Tstatfs;
-//  iPathWidth:Integer;
+  sbfs: TStatFS;
 begin
   with flblCurPath do
   begin
-    AutoSize:=False;
-    Caption:='['+ActiveDir+']$:';
-    AutoSize:=True;
-    Left:=1;
+    AutoSize := False;
+    Caption := '[' + ActiveDir + ']$:';
+    AutoSize := True;
+    Left := 1;
   end;
-  
-  fedtCommand.Left:=flblCurPath.Width+5;
-  fedtCommand.Width:=TControl(fedtCommand.Parent).Width-fedtCommand.Left;
-  if fPanelMode=pmDirectory then
+
+  fedtCommand.Left := flblCurPath.Width + 5;
+  fedtCommand.Width := TControl(fedtCommand.Parent).Width - fedtCommand.Left;
+
+  if fPanelMode = pmDirectory then
   begin
-    statfs(PChar(fActiveDir),sbfs);
-//    writeln('Statfs:',sbfs.bavail,' ',sbfs.bsize,' ',sbfs.blocks,' ', sbfs.bfree);
-    flblFree.Caption:=Format(lngGetString(clngFreeMsg),
-       [cnvFormatFileSize(Int64(sbfs.bavail)*sbfs.bsize),
-        cnvFormatFileSize(Int64(sbfs.blocks)*sbfs.bsize)]);
+    if fpStatFS(PChar(fActiveDir), @sbfs) = 0 then
+      flblFree.Caption := Format(lngGetString(clngFreeMsg),
+        [cnvFormatFileSize(Int64(sbfs.bavail) * sbfs.bsize),
+         cnvFormatFileSize(Int64(sbfs.blocks) * sbfs.bsize)])
+    else
+      flblFree.Caption := Format(lngGetString(clngFreeMsg),
+        [cnvFormatFileSize(0), cnvFormatFileSize(0)]);
   end
   else
-  //TODO
-    flblFree.Caption:=Format(lngGetString(clngFreeMsg),[cnvFormatFileSize(0),cnvFormatFileSize(0)]);
+    flblFree.Caption := Format(lngGetString(clngFreeMsg),
+      [cnvFormatFileSize(0), cnvFormatFileSize(0)]);
 end;
 
 procedure TFilePanel.LoadPanelFTP(frp:PFileRecItem);

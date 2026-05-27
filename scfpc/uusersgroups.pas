@@ -27,7 +27,7 @@ unit uUsersGroups;
 {$mode objfpc}{$H+}
 interface
 uses
-  Libc, Classes;
+  Classes;
 
 const
   groupInfo='/etc/group';
@@ -45,29 +45,50 @@ procedure getGroups(List: TStrings);
 
 implementation
 uses
-  SysUtils;
-  
+  SysUtils, Process, BaseUnix, Unix, UnixType;
+
 function uidToStr(uid: Cardinal): String;
 var
-  uinfo: ppasswd;
+  Process: TProcess;
+  OutputStream: TStringStream;
 begin
-  uinfo:=libc.getpwuid(uid);
-  if(uinfo=nil) then
-    result:=''
-  else
-    result:=String(uinfo^.pw_name);
-
+  Result := '';
+  Process := TProcess.Create(nil);
+  OutputStream := TStringStream.Create('');
+  try
+    Process.Executable := 'id';
+    Process.Parameters.Add('-nu');
+    Process.Parameters.Add(IntToStr(uid));
+    Process.Options := Process.Options + [poUsePipes];
+    Process.Execute;
+    OutputStream.CopyFrom(Process.Output, -1);
+    Result := Trim(OutputStream.DataString);
+  finally
+    Process.Free;
+    OutputStream.Free;
+  end;
 end;
 
 function gidToStr(gid: Cardinal): String;
 var
-  ginfo: Pgroup;
+  Process: TProcess;
+  OutputStream: TStringStream;
 begin
-  ginfo:=libc.getgrgid(gid);
-  if(ginfo=nil) then
-    result:=''
-  else
-    result:=String(ginfo^.gr_name);
+  Result := '';
+  Process := TProcess.Create(nil);
+  OutputStream := TStringStream.Create('');
+  try
+    Process.Executable := 'id';
+    Process.Parameters.Add('-ng');
+    Process.Parameters.Add(IntToStr(gid));
+    Process.Options := Process.Options + [poUsePipes];
+    Process.Execute;
+    OutputStream.CopyFrom(Process.Output, -1);
+    Result := Trim(OutputStream.DataString);
+  finally
+    Process.Free;
+    OutputStream.Free;
+  end;
 end;
 
 procedure getUsrGroups(uid:Cardinal;  List: TStrings);
@@ -126,27 +147,49 @@ begin
 end;
 
 function strToUID(uname: AnsiString): Cardinal;
-//Converts username to UID ('root' results to 0)
 var
-  uinfo: PPasswordRecord;
+  Process: TProcess;
+  OutputStream: TStringStream;
 begin
-  uinfo:=libc.getpwnam(PChar(uname));
-  if(uinfo=nil) then
-    result:=high(Cardinal)
-  else
-    result:=uinfo^.pw_uid;
+  Result := 0;
+  Process := TProcess.Create(nil);
+  OutputStream := TStringStream.Create('');
+  try
+    Process.Executable := 'id';
+    Process.Parameters.Add('-u');
+    Process.Parameters.Add(uname);
+    Process.Options := Process.Options + [poUsePipes];
+    Process.Execute;
+    OutputStream.CopyFrom(Process.Output, -1);
+    Result := StrToInt(Trim(OutputStream.DataString));
+  finally
+    Process.Free;
+    OutputStream.Free;
+  end;
 end;
 
 function strToGID(gname: AnsiString): Cardinal;
 var
-  ginfo: Pgroup;
+  Process: TProcess;
+  OutputStream: TStringStream;
 begin
-  ginfo:=libc.getgrnam(pChar(gname));
-  if(ginfo=nil) then
-    result:=high(Cardinal)
-  else
-    result:=ginfo^.gr_gid;
+  Result := 0;
+  Process := TProcess.Create(nil);
+  OutputStream := TStringStream.Create('');
+  try
+    Process.Executable := 'id';
+    Process.Parameters.Add('-g');
+    Process.Parameters.Add(gname);
+    Process.Options := Process.Options + [poUsePipes];
+    Process.Execute;
+    OutputStream.CopyFrom(Process.Output, -1);
+    Result := StrToInt(Trim(OutputStream.DataString));
+  finally
+    Process.Free;
+    OutputStream.Free;
+  end;
 end;
+
 {/mate}
 end.
 

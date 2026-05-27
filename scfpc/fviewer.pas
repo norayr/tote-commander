@@ -115,7 +115,7 @@ procedure ShowViewer(sl:TStringList);
 implementation
 
 uses
-  uLng, uShowMsg, uFindMmap, uGlobs, lcltype, lazjpeg ;
+  uLng, uShowMsg, uFindMmap, uGlobs, lcltype{, lazjpeg} ;
 
 procedure ShowViewer(sl:TStringList);
 var
@@ -201,7 +201,8 @@ begin
       miImage.Visible:=False;
       miEdit.Visible:=True;
       bImage:=False;
-      nbPages.ActivePageComponent:=pgText;
+     // nbPages.ActivePageComponent:=pgText;
+      nbPages.PageIndex := nbPages.IndexOf(pgText);
       ViewerControl.UnMapFile; // if any mapped
 //      miProcess.Click;
       ViewerControl.MapFile(sList.Strings[iIndex]);     //handled by miProcess.Click
@@ -431,7 +432,8 @@ begin
     miImage.Visible:=False;
     miEdit.Visible:=True;
     bImage:=False;
-    nbPages.ActivePageComponent:=pgText;
+    //nbPages.ActivePageComponent:=pgText;
+    nbPages.PageIndex := nbPages.IndexOf(pgImage);
     image.Picture:=nil;
   end;
   Status.Panels[2].Text:=IntToStr(ViewerControl.FileSize);
@@ -481,7 +483,8 @@ begin
      Height:=100
   else
      Height:=Image.Picture.Height+Status.Height+10; // bulgarian constant
-  nbPages.ActivePageComponent:=pgImage;
+  //nbPages.ActivePageComponent:=pgImage;
+  nbPages.PageIndex := nbPages.IndexOf(pgImage);
   miImage.Visible:=True;
   miEdit.Visible:=False;
 //  miView.Visible:=False;// text modes

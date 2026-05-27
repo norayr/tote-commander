@@ -12,7 +12,7 @@ uses
   SysUtils,
 
 //  cthreads,
-  Forms,
+  Forms, imagesforlazarus,
   fMain,
   fAbout,
   uFileList,
@@ -63,7 +63,6 @@ uses
     writeln('This program is free software released under terms of GNU GPL 2');
     writeln('                       v');
     writeln('(C)opyright 2003-4 Radek Cervinka (radek.cervinka@centrum.cz) and contributors');
-    Application.Title := 'Seksi Commander';
     Application.CreateForm(TfrmMain, frmMain);
     Application.CreateForm(TdmHighl, dmHighl);
     Application.Run;

@@ -66,7 +66,7 @@ procedure ShowFileProperties(FileList:TFileList; const aPath:String);
 implementation
 
 uses
-  uLng, uFileProcs, FindEx, BaseUnix, Libc;
+  uLng, uFileProcs, FindEx, BaseUnix;
 
 procedure ShowFileProperties(FileList:TFileList; const aPath:String);
 begin
@@ -115,7 +115,7 @@ end;
 
 procedure TfrmFileProperties.ShowFile(iIndex:Integer);
 var
-  sb: FindEx.Stat64;
+  sb: Stat;
   dtFileDates:TDateTime;
   psUidRec:PPasswordRecord;
   psGidRec:PGroup;
@@ -123,7 +123,8 @@ begin
   try
     with fFileList.GetItem(iIndex)^ do
     begin
-      fpstat64(PChar(szPath + sName), sb);
+      //fpstat64(PChar(szPath + sName), sb);
+      if FpLStat(szPath + sName, sb) <> 0 then Exit;
 
       lblFileName.Caption:=sName;
       lblFolder.Caption:=szPath;
@@ -140,12 +141,14 @@ begin
         lblSymlink.Caption:=lngGetString(clngPropsNo);
 
 
-      psUidRec := getpwuid(sb.st_uid);
+      //psUidRec := getpwuid(sb.st_uid);
+      psUidRec := FpGetpwuid(sb.st_uid);
       if not assigned(psUidRec) then
         lblOwner.Caption:=IntToStr(sb.st_uid)
       else
         lblOwner.Caption:=psUidRec^.pw_name;
-      psGidRec := getgrgid(sb.st_gid);
+      //psGidRec := getgrgid(sb.st_gid);
+      psGidRec := FpGetgrgid(sb.st_gid);
       if not assigned(psGidRec) then
         lblGroup.Caption:=IntToStr(sb.st_gid)
       else

@@ -6,7 +6,6 @@ object frmEditorConf: TfrmEditorConf
   Color = clBackground
   OnCreate = FormCreate
   Position = poScreenCenter
-  TextHeight = 16
   HorzScrollBar.Page = 448
   HorzScrollBar.Range = 513
   VertScrollBar.Page = 272
@@ -118,7 +117,6 @@ object frmEditorConf: TfrmEditorConf
     ItemHeight = 18
     MaxLength = 0
     OnChange = cmbPredefinedChange
-    ParentCtl3D = False
     Style = csDropDownList
     TabOrder = 7
     Left = 8
@@ -166,7 +164,6 @@ object frmEditorConf: TfrmEditorConf
     Font.Name = 'courier'
     Height = 56
     Name = 'edtSample'
-    ParentCtl3D = False
     TabOrder = 11
     Width = 232
     BookMarkOptions.OnChange = nil
@@ -496,7 +493,6 @@ object frmEditorConf: TfrmEditorConf
       'bla bla ble ble blu blu'
       'blu blu ble ble bla bla'
     )
-    SelectedColor.OnChange = nil
     Cursor = 65532
     Left = 8
     Height = 56

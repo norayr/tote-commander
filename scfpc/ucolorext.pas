@@ -52,14 +52,14 @@ function TColorExt.ColorByExt(const sExt:String):TColor;
 var
   iIndex:Integer;
 begin
-  Result:=clText;
+  Result:=clWindowText;
   if sExt='' then Exit;
   if sExt[1]='.' then
     iIndex:= lsExts.IndexOf(UpperCase(Copy(sExt,2, Length(sExt)-1)))
    else
     iIndex:= lsExts.IndexOf(UpperCase(sExt));
   if iIndex=-1 then Exit;
-  Result:=TColor(lsExts.Objects[iIndex]);
+  Result:=TColor(PtrInt(lsExts.Objects[iIndex]));
 end;
 
 procedure TColorExt.LoadFromFile(const sFileName:String);
@@ -86,8 +86,8 @@ begin
       if sExt='' then Continue;
       if sExt[1]='.' then
         Delete(sExt,1,1);
-      iColor:=StrToIntDef(sColor, Integer(clText));
-      lsExts.AddObject(sExt,TObject(iColor));
+      iColor:=StrToIntDef(sColor, Integer(clWindowText));
+      lsExts.AddObject(sExt,TObject(PtrInt(iColor)));
     end;
   finally
     closefile(f);

@@ -12,7 +12,7 @@ uses
   SysUtils,
 
 //  cthreads,
-  Forms,
+  Forms, imagesforlazarus,
   fMain,
   fAbout,
   uFileList,

@@ -415,7 +415,8 @@ begin
       Canvas.Font.Color:=clRed
     else
     if (gdSelected in State) then
-      Canvas.Font.Color:=clHighlightedText
+      //Canvas.Font.Color:=clHighlightedText
+      Canvas.Font.Color:=clHighlightText
     else
       Canvas.Font.Color:={clText} NewColor;
 

@@ -20,7 +20,6 @@ object frmMain: TfrmMain
   OnShow = frmMainShow
   Position = poDesktopCenter
   ShowHint = True
-  TextHeight = 16
   HorzScrollBar.Page = 804
   VertScrollBar.Page = 491
   VertScrollBar.Range = 79
@@ -161,7 +160,6 @@ object frmMain: TfrmMain
       MaxLength = 0
       OnKeyDown = edtCommandKeyDown
       OnKeyUp = edtCommandKeyUp
-      ParentCtl3D = False
       TabOrder = 2
       TabStop = False
       TabStop = False
@@ -183,8 +181,6 @@ object frmMain: TfrmMain
     Width = 803
     object nbLeft: TNotebook
       Align = alLeft
-      OnCloseTabClicked = NoteBookCloseTabClicked
-      Options = [nboShowCloseButtons]
       Left = 1
       Height = 382
       Top = 1
@@ -203,8 +199,6 @@ object frmMain: TfrmMain
     end
     object nbRight: TNotebook
       Align = alClient
-      OnCloseTabClicked = NoteBookCloseTabClicked
-      Options = [nboShowCloseButtons]
       Left = 397
       Height = 382
       Top = 1

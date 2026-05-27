@@ -89,7 +89,7 @@ procedure TFileOpThread.FillAndCountRec(const srcPath, dstPath:String);
 var
   sr:TSearchRec;
   fr:TFileRecItem;
-  sb: stat64;
+  sb: Stat;
   
 begin
   if FindFirstEx(srcPath+'*',faAnyFile,sr)<>0 then
@@ -100,7 +100,9 @@ begin
   repeat
     if (sr.Name='.') or (sr.Name='..') then Continue;
     fr.sName:=srcPath+sr.Name;
-    fpstat64(PChar(fr.sName),sb);
+    //fpstat64(PChar(fr.sName),sb);
+    if FpStat(fr.sName, sb) <> 0 then
+  Continue;
 //    write(fr.sName,': ');
     fr.sPath:=dstPath;
     fr.sNameNoExt:=sr.Name; // we use to save dstname

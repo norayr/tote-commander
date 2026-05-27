@@ -185,34 +185,40 @@ begin
   end;
 end;
 
-function TCopyThread.CorrectFileInfo(const sSrc, sDst:String):Boolean;
+function TCopyThread.CorrectFileInfo(const sSrc, sDst: String): Boolean;
 var
-  stat:Stat64;
-  utb:PUTimBuf;
-
+  st: Stat;
+  utb: TUTimBuf;
 begin
-  fpstat64(PChar(sSrc),stat);
-//  writeln(AttrToStr(stat.st_mode));  // file time
-  new(utb);
-  utb^.actime:=stat.st_atime;  //last access time // maybe now
-  utb^.modtime:=stat.st_mtime; // last modification time
-  fputime(PChar(sDst),utb);
-  dispose(utb);
-// end file
+  Result := False;
 
-// owner & group
-  if fpChown(PChar(sDst),stat.st_uid, stat.st_gid)=-1 then
+  if FpStat(sSrc, st) <> 0 then
   begin
-    // development messages
-    writeln(Format('chown (%s) failed',[sSrc]));
+    writeln(Format('stat (%s) failed, errno=%d', [sSrc, fpGetErrno]));
+    Exit;
   end;
-// mod
-  if fpChmod(PChar(sDst), stat.st_mode)=-1 then
+
+  // file times
+  utb.actime := st.st_atime;
+  utb.modtime := st.st_mtime;
+
+  if FpUTime(sDst, @utb) <> 0 then
+    writeln(Format('utime (%s) failed, errno=%d', [sDst, fpGetErrno]));
+
+  // owner & group
+  if FpChown(sDst, st.st_uid, st.st_gid) <> 0 then
   begin
-    // development messages
-    writeln(Format('chmod (%s) failed',[sSrc]));
+    // non-root copy will often fail here; not fatal
+    writeln(Format('chown (%s) failed, errno=%d', [sDst, fpGetErrno]));
   end;
-  Result:=True;
+
+  // mode
+  if FpChmod(sDst, st.st_mode) <> 0 then
+  begin
+    writeln(Format('chmod (%s) failed, errno=%d', [sDst, fpGetErrno]));
+  end;
+
+  Result := True;
 end;
 
 Function TCopyThread.GetCaptionLng:String;
