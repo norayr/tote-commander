@@ -100,11 +100,17 @@ begin
   flblFree:=AlblFree;
   fedtCommand:=AedtCommand;
   fFileList:=TFileList.Create;
-  GetDir(0,fActiveDir);
-  fActiveDir:=ExtractFilePath(fActiveDir);
+
+  { Old code used GetDir + ExtractFilePath.  On Unix this can turn
+    /home/user/dir into /home/user/ because ExtractFilePath treats the
+    last component as a file name when there is no trailing slash. }
+  fActiveDir:=IncludeTrailingPathDelimiter(GetCurrentDir);
+
   fPathHistory:=TPathHistory.Create;
   fPanelMode:=pmDirectory;
-//  LastActive:='';
+  fSortCol:=0;
+  fSortDirect:=False;
+  LastActive:='';
 //  iLastDrawnIndex:=-1;
 end;
 
@@ -125,36 +131,71 @@ var
   pfri:PFileRecItem;
   bAnyRow:Boolean;
 begin
+  writeln('TFilePanel.UpdatePanel begin');
+
   case fPanelMode of
-    pmDirectory: flblPath.Caption:=' '+ActiveDir;
-    pmArchive: flblPath.Caption:=' '+ExtractFileName(fPathHistory.GetLastPath)+':'+ActiveDir;
-    pmFTP: flblPath.Caption:=' fix me: FTP is only prepared';
+    pmDirectory:
+      if assigned(flblPath) then
+        flblPath.Caption:=' '+ActiveDir;
+    pmArchive:
+      if assigned(flblPath) then
+        flblPath.Caption:=' '+ExtractFileName(fPathHistory.GetLastPath)+':'+ActiveDir;
+    pmFTP:
+      if assigned(flblPath) then
+        flblPath.Caption:=' fix me: FTP is only prepared';
   else
     Raise Exception.Create('fix me:UpdatePanel:bad panelmode');
   end;
-//  writeln('fPanel.Row:',fPanel.Row);
-//  writeln('TFilePanel:', fFileList.Count);
+
+  if not assigned(fPanel) then
+    Raise Exception.Create('TFilePanel.UpdatePanel: fPanel is nil');
+  if not assigned(fFileList) then
+    Raise Exception.Create('TFilePanel.UpdatePanel: fFileList is nil');
+  if not assigned(fRefList) then
+    Raise Exception.Create('TFilePanel.UpdatePanel: fRefList is nil');
+
   bAnyRow:=fPanel.Row>=0;
   fRefList.Clear;
+
+  writeln('  fFileList.Count=', fFileList.Count);
   for i:=0 to fFileList.Count-1 do
   begin
     pfri:=fFileList.GetItem(i);
+    if not assigned(pfri) then
+    begin
+      writeln('  warning: nil file item at index ', i);
+      Continue;
+    end;
+
     with pfri^ do
     begin
+      if (sName='') then
+      begin
+        writeln('  warning: empty file name at index ', i);
+        Continue;
+      end;
       if not gShowSystemFiles and (sName[1]='.') and (sName<>'..') then Continue;
       fRefList.Add(pfri);
     end;
   end;
 
+  writeln('  fRefList.Count=', fRefList.Count);
   fPanel.RowCount:=fRefList.Count+1; // one is header
+
+  writeln('  before UpdatePrompt');
   UpdatePrompt;
+  writeln('  after UpdatePrompt');
+
   if bAnyRow then
   begin
     if (LastActive<>'') then // find correct cursor position in Panel (drawgrid)
     begin
       for i:=0 to fRefList.Count-1 do
       begin
-        with GetReferenceItemPtr(i)^ do
+        pfri:=GetReferenceItemPtr(i);
+        if not assigned(pfri) then
+          Continue;
+        with pfri^ do
           if pos(LastActive, sName)=1 then
           begin
             fPanel.Row:=i+1;
@@ -166,9 +207,11 @@ begin
       fPanel.Row:=0;
     if (fPanel.Row<0)then
       fPanel.Row:=0;
-  end;    
-//  fPanel.Selected.MakeVisible;}
+  end;
+
+  writeln('  before UpdateCountStatus');
   UpdateCountStatus;
+  writeln('TFilePanel.UpdatePanel end');
 end;
 
 procedure TFilePanel.LoadPanelVFS(frp:PFileRecItem);
@@ -243,30 +286,65 @@ end;
 
 
 procedure TFilePanel.LoadPanel;
+var
+  sDir:String;
 begin
-//  writeln('TFilePanel.LoadPanel');
+  writeln('TFilePanel.LoadPanel begin');
+  writeln('  fPanelMode=', Ord(fPanelMode));
+  writeln('  fActiveDir=', fActiveDir);
+  writeln('  ActiveDir=', ActiveDir);
+
+  if not assigned(fFileList) then
+    Raise Exception.Create('TFilePanel.LoadPanel: fFileList is nil');
+  if not assigned(fPanel) then
+    Raise Exception.Create('TFilePanel.LoadPanel: fPanel is nil');
+
+  if fActiveDir='' then
+  begin
+    fActiveDir:=IncludeTrailingPathDelimiter(GetCurrentDir);
+    writeln('  fActiveDir was empty, now ', fActiveDir);
+  end;
+
   case fPanelMode of
   pmArchive:
-    VFS.VFSListItems(fPathHistory.GetLastPath,ActiveDir,fFileList);
+    begin
+      writeln('  before VFS.VFSListItems archive');
+      VFS.VFSListItems(fPathHistory.GetLastPath,ActiveDir,fFileList);
+      writeln('  after VFS.VFSListItems archive');
+    end;
   pmFTP:
     Raise Exception.Create('FTP is only prepared');
   else
     begin
       // classic filesystem
-      if fpchdir(PChar(ActiveDir))<>0 then
+      sDir:=ActiveDir;
+      writeln('  before fpchdir: ', sDir);
+      if fpchdir(PChar(AnsiString(sDir)))<>0 then
       begin
-        GetDir(0,fActiveDir);
-        if fActiveDir<>'/' then
-          fActiveDir:=fActiveDir+'/';
+        writeln('  fpchdir failed, errno=', fpGetErrno);
+        fActiveDir:=IncludeTrailingPathDelimiter(GetCurrentDir);
+        writeln('  restored fActiveDir=', fActiveDir);
         Exit;   // chdir failed
       end;
+      writeln('  after fpchdir');
+
+      writeln('  before LoadFilesbyDir: ', fActiveDir);
       LoadFilesbyDir(fActiveDir, fFileList);
+      writeln('  after LoadFilesbyDir, count=', fFileList.Count);
     end;
   end; // case
+
+  writeln('  before fFileList.UpdateFileInformation');
   fFileList.UpdateFileInformation;
+  writeln('  after fFileList.UpdateFileInformation');
+
+  writeln('  before Sort');
   Sort; // and Update panel
+  writeln('  after Sort');
+
+  writeln('  before fPanel.Invalidate');
   fPanel.Invalidate;
-//  writeln('TFilePanel.LoadPanel DONE');
+  writeln('TFilePanel.LoadPanel end');
 end;
 
 
@@ -295,6 +373,8 @@ end;
 
 procedure TFilePanel.InvertFileSection(frp:PFileRecItem);
 begin
+  if not assigned(frp) then Exit;
+  if frp^.sName='' then Exit;
   if not gShowSystemFiles and (frp^.sName[1]='.') then Exit;
   frp^.bSelected:=not frp^.bSelected;
 end;
@@ -388,7 +468,9 @@ begin
   for i:=0 to fFileList.Count-1 do
   begin
     fr:=fFileList.GetItem(i);
-    if not gShowSystemFiles and (fr^.sName[1]='.') then
+    if not assigned(fr) then
+      Continue;
+    if (fr^.sName<>'') and (not gShowSystemFiles) and (fr^.sName[1]='.') then
 // system files is always not selected if not showed
       fr^.bSelected:=False
     else
@@ -409,32 +491,38 @@ end;
 procedure TFilePanel.UpdateCountStatus;
 var
   i:Integer;
+  p:PFileRecItem;
 begin
   fFilesInDir:=0;
   fFilesSelected:=0;
   fSizeInDir:=0;
   fSizeSelected:=0;
+
+  if not assigned(fFileList) then Exit;
+
   for i:=0 to fFileList.Count-1 do
   begin
-    with fFileList.GetItem(i)^ do
+    p:=fFileList.GetItem(i);
+    if not assigned(p) then Continue;
+
+    with p^ do
     begin
-//      if S_ISDIR(fMode) then Continue;
       if sName='..' then Continue;
+      inc(fFilesInDir);
+
       if bSelected then
       begin
         inc(fFilesSelected);
         if not FPS_ISDIR(iMode) then
-          fSizeSelected:=Cardinal(fSizeSelected)+iSize
-        else
-          if iDirSize<>0 then
-            fSizeSelected:=Cardinal(fSizeSelected)+iDirSize;
+          fSizeSelected:=fSizeSelected+iSize
+        else if iDirSize<>0 then
+          fSizeSelected:=fSizeSelected+iDirSize;
       end;
-      inc(fFilesInDir);
+
       if not FPS_ISDIR(iMode) then
-        fSizeInDir:=Cardinal(fSizeInDir)+iSize
-      else
-        if iDirSize<>0 then
-          fSizeSelected:=Cardinal(fSizeSelected)+iDirSize;
+        fSizeInDir:=fSizeInDir+iSize
+      else if iDirSize<>0 then
+        fSizeInDir:=fSizeInDir+iDirSize;
     end;
   end;
 end;
@@ -612,18 +700,19 @@ end;
 
 procedure TFilePanel.SetActiveDir(const AValue:String);
 begin
-  fActiveDir := IncludeTrailingBackslash(AValue);
+  fActiveDir := IncludeTrailingPathDelimiter(AValue);
 end;
 
 function TFilePanel.GetActiveDir:String;
 begin
-  Result := IncludeTrailingBackslash(fActiveDir);
+  Result := IncludeTrailingPathDelimiter(fActiveDir);
 end;
 
 function TFilePanel.GetReferenceItemPtr(iIndex:Integer):PFileRecItem;
 begin
   Result:=nil;
-  if iIndex>=fRefList.Count then Exit;
+  if not assigned(fRefList) then Exit;
+  if (iIndex<0) or (iIndex>=fRefList.Count) then Exit;
   Result:=PFileRecItem(fRefList.Items[iIndex]);
 end;
 end.

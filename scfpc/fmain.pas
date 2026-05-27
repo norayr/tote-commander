@@ -1894,7 +1894,7 @@ begin
   ActiveFrame.SetFocus;
   NotActiveFrame.dgPanelExit(self);
 end;
-
+{
 procedure TfrmMain.CreatePanel(AOwner: TWinControl; APanel:TFilePanelSelect);
 begin
   with TFrameFilePanel.Create(AOwner, lblCommandPath, edtCommand) do
@@ -1917,6 +1917,46 @@ begin
 
   end;
 
+end;
+ }
+
+procedure TfrmMain.CreatePanel(AOwner: TWinControl; APanel: TFilePanelSelect);
+var
+  Frame: TFrameFilePanel;
+begin
+  writeln('CreatePanel begin: ', Ord(APanel));
+
+  writeln('  before TFrameFilePanel.Create');
+  Frame := TFrameFilePanel.Create(AOwner, lblCommandPath, edtCommand);
+  writeln('  after TFrameFilePanel.Create');
+
+  Frame.edtCmdLine := edtCommand;
+  Frame.PanelSelect := APanel;
+
+  writeln('  before Init');
+  Frame.Init;
+  writeln('  after Init');
+
+  writeln('  before ReAlign');
+  Frame.ReAlign;
+  writeln('  after ReAlign');
+
+  writeln('  before pnlFile.LoadPanel');
+  Frame.pnlFile.LoadPanel;
+  writeln('  after pnlFile.LoadPanel');
+
+  writeln('  before UpDatelblInfo');
+  Frame.UpDatelblInfo;
+  writeln('  after UpDatelblInfo');
+
+  Frame.lblLPath.OnClick := @FramelblLPathClick;
+  Frame.edtRename.OnExit := @FrameRightedtRenameExit;
+  Frame.edtSearch.OnExit := @FrameedtSearchExit;
+
+  Frame.dgPanel.OnEnter := @framedgPanelEnter;
+  Frame.dgPanel.PopupMenu := pmFileList;
+
+  writeln('CreatePanel end: ', Ord(APanel));
 end;
 
 function TfrmMain.AddPage(ANoteBook: TNoteBook): TPage;

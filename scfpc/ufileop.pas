@@ -58,76 +58,189 @@ end;
 
 Function LoadFilesbyDir(const sDir:String; fl:TFileList):Boolean;
 var
-  fr:TFileRecItem;
-  sr:TSearchRec;
-  sb: BaseUnix.Stat; //buffer for stat64
-  
-begin
-//  writeln('Enter LoadFilesbyDir');
-  Result:=True;
-  fl.Clear;
-  if FindFirstEx('*',faAnyFile,sr)<>0 then
+  fr: TFileRecItem;
+  sr: TSearchRec;
+  sb: Stat;
+  sSearchPath: String;
+  sFullName: String;
+  n: Integer;
+  r: Integer;
+
+  procedure ClearFileRecItem(var ARec: TFileRecItem);
   begin
-    with fr do     // append "blank dir"
-    begin
-      fr.sName:='..';
-      fr.sNameNoExt:='..';
-      fr.sExt:='';
-      fr.iDirSize:=0;
-      fr.iMode:=0;
-      fr.bExecutable:=False;
-      fr.bIsLink:=False;
-      fr.sLinkTo:='';
-      fr.bLinkIsDir:=False;
-      fr.bSelected:=False;
-      fr.sModeStr:='';
-      fr.iSize:=0;
-      fl.AddItem(@fr);
+    { Do not FillChar this record: it contains managed strings. }
+    ARec.sName := '';
+    ARec.sNameNoExt := '';
+    ARec.sExt := '';
+    ARec.iDirSize := 0;
+    ARec.iMode := 0;
+    ARec.bExecutable := False;
+    ARec.bIsLink := False;
+    ARec.sLinkTo := '';
+    ARec.bLinkIsDir := False;
+    ARec.bSelected := False;
+    ARec.sModeStr := '';
+    ARec.iSize := 0;
+    ARec.iOwner := 0;
+    ARec.iGroup := 0;
+    ARec.sOwner := '';
+    ARec.sGroup := '';
+    ARec.fTimeI := 0;
+    ARec.sTime := '';
+  end;
+
+  function SafeUIDToStr(AUid: Cardinal): String;
+  begin
+    try
+      Result := UIDToStr(AUid);
+    except
+      on E: Exception do
+      begin
+        Writeln('Warning: UIDToStr failed for ', AUid, ': ', E.Message);
+        Result := IntToStr(AUid);
+      end;
     end;
-    FindCloseEx(sr);
+  end;
+
+  function SafeGIDToStr(AGid: Cardinal): String;
+  begin
+    try
+      Result := GIDToStr(AGid);
+    except
+      on E: Exception do
+      begin
+        Writeln('Warning: GIDToStr failed for ', AGid, ': ', E.Message);
+        Result := IntToStr(AGid);
+      end;
+    end;
+  end;
+
+  procedure AddParentDirItem;
+  begin
+    ClearFileRecItem(fr);
+    fr.sName := '..';
+    fr.sNameNoExt := '..';
+    fl.AddItem(@fr);
+  end;
+
+  procedure ProcessEntry;
+  begin
+    if sr.Name = '.' then
+      Exit;
+
+    if (sDir = '/') and (sr.Name = '..') then
+      Exit;
+
+    Inc(n);
+    Writeln('  entry ', n, ': ', sr.Name);
+
+    ClearFileRecItem(fr);
+
+    if (sr.Name <> '') and (sr.Name[1] = '.') then
+      fr.sExt := ''
+    else
+      fr.sExt := ExtractFileExt(sr.Name);
+
+    fr.sNameNoExt := Copy(sr.Name, 1, Length(sr.Name) - Length(fr.sExt));
+    fr.sName := sr.Name;
+
+    sFullName := IncludeTrailingPathDelimiter(sDir) + sr.Name;
+
+    { Use lstat semantics so symlinks remain symlinks in the panel. }
+    if FpLStat(PChar(sFullName), sb) <> 0 then
+    begin
+      Writeln('    warning: FpLStat failed for ', sFullName,
+        ', errno=', FpGetErrno);
+      Exit;
+    end;
+
+    fr.iSize := sb.st_size;
+    fr.iOwner := sb.st_uid;
+    fr.iGroup := sb.st_gid;
+
+    fr.sOwner := SafeUIDToStr(fr.iOwner);
+    fr.sGroup := SafeGIDToStr(fr.iGroup);
+
+    fr.iMode := sb.st_mode;
+    fr.fTimeI := FileStampToDateTime(sb.st_mtime);
+    fr.sTime := DateTimeToStr(Trunc(fr.fTimeI));
+
+    fr.bIsLink := FPS_ISLNK(fr.iMode);
+    if fr.bIsLink then
+    begin
+      try
+        fr.sLinkTo := FpReadLink(PChar(sFullName));
+      except
+        on E: Exception do
+        begin
+          Writeln('    warning: FpReadLink failed for ', sFullName, ': ', E.Message);
+          fr.sLinkTo := '';
+        end;
+      end;
+    end;
+
+    if fr.bIsLink and (fr.sLinkTo <> '') then
+    begin
+      if ExtractFilePath(fr.sLinkTo) = '' then
+        fr.bLinkIsDir := IsDirByName(IncludeTrailingPathDelimiter(sDir) + fr.sLinkTo)
+      else
+        fr.bLinkIsDir := IsDirByName(fr.sLinkTo);
+    end
+    else
+      fr.bLinkIsDir := False;
+
+    fr.bSelected := False;
+    fr.sModeStr := AttrToStr(fr.iMode);
+    fr.bExecutable := (not FPS_ISDIR(fr.iMode)) and
+      ((fr.iMode and (S_IXUSR or S_IXGRP or S_IXOTH)) <> 0);
+
+    Writeln('    before AddItem: ', fr.sName);
+    fl.AddItem(@fr);
+    Writeln('    after AddItem: ', fr.sName);
+  end;
+
+begin
+  Writeln('LoadFilesbyDir begin: ', sDir);
+  Result := False;
+
+  if not Assigned(fl) then
+  begin
+    Writeln('LoadFilesbyDir: file list is nil');
     Exit;
   end;
-  repeat
-    if sr.Name='.' then Continue;
-    if (sDir='/') and (sr.Name='..') then Continue;
-//    if sr.Name='' then COntinue;
-    if {S_ISDIR(sr.Mode) or} (sr.Name[1]='.') then //!!!!!
-      fr.sExt:=''
-    else
-      fr.sExt:=ExtractFileExt(sr.Name);
-    fr.sNameNoExt:=Copy(sr.Name,1,length(sr.Name)-length(fr.sExt));
-    fr.sName:=sr.Name;
 
-    Fpstat(sr.Name,sb);
-    fr.iSize:=sb.st_size;
+  fl.Clear;
+  ClearFileRecItem(fr);
 
-    fr.iOwner:=sb.st_uid; //UID
-    fr.iGroup:=sb.st_gid; //GID
-    fr.sOwner:=UIDToStr(fr.iOwner);
-    fr.sGroup:=GIDToStr(fr.iGroup);
-{/mate}
-    fr.iMode:=sb.st_mode;
-    fr.fTimeI:= FileStampToDateTime(sb.st_mtime); // EncodeDate (1970, 1, 1) + (sr.Time / 86400.0);
+  sSearchPath := IncludeTrailingPathDelimiter(sDir) + '*';
+  Writeln('  FindFirst: ', sSearchPath);
 
-    fr.sTime:=DateTimeToStr(Trunc(fr.fTimeI));
-    fr.bIsLink:=FPS_ISLNK(fr.iMode);
-    fr.sLinkTo:='';
-    fr.iDirSize:=0;
-    if fr.bIsLink then
+  r := SysUtils.FindFirst(sSearchPath, faAnyFile, sr);
+  if r <> 0 then
+  begin
+    Writeln('LoadFilesbyDir: FindFirst returned no entries/error: ', r);
+    AddParentDirItem;
+    Result := True;
+    Exit;
+  end;
+
+  n := 0;
+  try
+    while r = 0 do
     begin
-      fr.sLinkTo:=fpReadLink(PChar(sr.Name));
+      ProcessEntry;
+      Writeln('    before FindNext');
+      r := SysUtils.FindNext(sr);
+      Writeln('    after FindNext: ', r);
     end;
-    if fr.bIsLink then
-      fr.bLinkIsDir:=IsDirByName(fr.sLinkTo)
-    else
-      fr.bLinkIsDir:=False;
-    fr.bSelected:=False;
-    fr.sModeStr:=AttrToStr(fr.iMode);
-    fr.bExecutable:=(not FPS_ISDIR(fr.iMode)) and (fr.iMode AND (S_IXUSR OR S_IXGRP OR S_IXOTH)>0);
-    fl.AddItem(@fr);
-  until FindNextEx(sr)<>0;
-  FindCloseEx(sr);
-  Result:=True;
+  finally
+    Writeln('  before FindClose');
+    SysUtils.FindClose(sr);
+    Writeln('  after FindClose');
+  end;
+
+  Writeln('LoadFilesbyDir end, entries=', n);
+  Result := True;
 end;
 
 Function AttrToStr(iAttr:Cardinal):String;
